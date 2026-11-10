@@ -1,100 +1,100 @@
 # image-to-psd
 
-把一张角色原画（PNG / JPG / SVG）拆成可直接用于 2.5D 动画的**分层 PSD**。
+**English** | [中文](README.zh-CN.md)
 
-An agent skill that turns a single character illustration into a layered PSD: 19 standard parts, each with its own pixels and an editable mask.
+An agent skill that turns a single character illustration (PNG / JPG / SVG) into a **layered PSD** ready for 2.5D animation: 19 standard parts, each with its own pixels and an editable mask.
 
-| 原画 | 拆出的图层 |
+| Original | Extracted layers |
 |---|---|
 | <img src="examples/blue_maid_preview.png" width="320"> | <img src="examples/blue_maid_layers.png" width="520"> |
 
-## 安装
+## Install
 
 ```bash
 npx skills add link-ding/image-to-psd --skill image-to-psd -a codex -g -y
 ```
 
-- `-a codex`：安装到 Codex。换成其他 agent 名称即可安装到别处。
-- `-g`：全局安装，所有项目可用。
-- `-y`：跳过确认。
+- `-a codex`: install for Codex. Use another agent name to install elsewhere.
+- `-g`: install globally, available in every project.
+- `-y`: skip the confirmation prompts.
 
-导出脚本需要 Python 依赖：
+The export script needs these Python packages:
 
 ```bash
 pip install pillow numpy psd-tools
 ```
 
-需要读取 SVG 输入时再装 `cairosvg`。
+Add `cairosvg` if you want to read SVG input.
 
-## 使用
+## Usage
 
-把角色图发给 agent，然后说：
+Give the agent a character image and say:
 
 ```
-用 $image-to-psd 把这张角色图拆成分层 PSD
+Use $image-to-psd to split this character artwork into a layered PSD
 ```
 
-skill 会依次完成：
+The skill's instructions are written in Chinese; the agent follows them whatever language you prompt in. It will:
 
-1. 查看原画，判断各部件的边界和遮挡关系。
-2. 用 ImageGen 生成部件参考图。
-3. 从原画分割可见部分，被遮住的地方（刘海下的脸、头后面的后发、瞳孔下的眼白）做补形。
-4. 导出 PSD，每层带独立的 RGBA 像素和灰度蒙版。
-5. 重新读取 PSD 逐层自查，修正串层、缺口和碎片后再交付。
+1. Study the artwork and work out each part's boundaries and occlusion.
+2. Generate part reference images with ImageGen.
+3. Segment the visible areas from the original, and fill in what is hidden (the face under the bangs, the back hair behind the head, the eye whites under the irises).
+4. Export a PSD where every layer has its own RGBA pixels and a grayscale mask.
+5. Reopen the PSD and review it layer by layer, fixing bleed between layers, gaps and stray fragments before delivery.
 
-画风、颜色、姿势、位置和画布大小都保持不变。
+Art style, colors, pose, position and canvas size stay unchanged.
 
-## 19 个标准图层
+## The 19 standard layers
 
-| 图层 | 内容 |
+| Layer | Contents |
 |---|---|
-| `back hair` | 后发 |
-| `front hair` | 前发、刘海、侧发 |
-| `face` | 连续的脸部底形、腮红 |
-| `ears` | 人耳或兽耳 |
-| `earwear` | 耳饰 |
-| `eyebrow` | 左右眉毛 |
-| `eyewhite` | 左右眼白 |
-| `irides` | 虹膜、瞳孔、高光 |
-| `eyelash` | 睫毛、眼线 |
-| `nose` | 鼻子 |
-| `mouth` | 原画嘴型 |
-| `headwear` | 发饰、帽子、头部蝴蝶结 |
-| `neck` | 脖子 |
-| `topwear` | 上衣及其装饰 |
-| `handwear` | 手、手臂、袖子、手套 |
-| `bottomwear` | 裙子、裤子 |
-| `legwear` | 腿、袜子 |
-| `footwear` | 鞋 |
-| `objects` | 手持道具 |
+| `back hair` | Hair behind the head |
+| `front hair` | Bangs and side locks |
+| `face` | Continuous face base, blush |
+| `ears` | Human or animal ears |
+| `earwear` | Earrings |
+| `eyebrow` | Both eyebrows |
+| `eyewhite` | Both eye whites |
+| `irides` | Irises, pupils, highlights |
+| `eyelash` | Eyelashes, eyeliner |
+| `nose` | Nose |
+| `mouth` | The mouth as drawn |
+| `headwear` | Hair accessories, hats, head bows |
+| `neck` | Neck |
+| `topwear` | Top and its decorations |
+| `handwear` | Hands, arms, sleeves, gloves |
+| `bottomwear` | Skirt, trousers |
+| `legwear` | Legs, socks |
+| `footwear` | Shoes |
+| `objects` | Hand-held props |
 
-原画里没有的部件保留为空层。手和道具前后交错时，可以把 `handwear` 拆成 `handwear back` 和 `handwear front`，共 20 层。
+Parts that are not in the artwork are kept as empty layers. When a hand and a prop overlap in both directions, `handwear` can be split into `handwear back` and `handwear front`, giving 20 layers.
 
-## 示例
+## Examples
 
-[`examples/`](examples) 里是用这个 skill 做出来的 PSD，可以直接下载，用 Photoshop、Krita 或 Clip Studio Paint 打开。
+[`examples/`](examples) holds PSDs made with this skill. Download them and open in Photoshop, Krita or Clip Studio Paint.
 
 ### Blue Maid
 
 <img src="examples/blue_maid_preview.png" width="300"> <img src="examples/blue_maid_layers.png" width="480">
 
-[下载 blue_maid.psd](examples/blue_maid.psd)（1254×1254，12 MB）
+[Download blue_maid.psd](examples/blue_maid.psd) (1254×1254, 12 MB)
 
 ### Orange Book Girl
 
 <img src="examples/orange_book_girl_preview.png" width="300"> <img src="examples/orange_book_girl_layers.png" width="480">
 
-[下载 orange_book_girl.psd](examples/orange_book_girl.psd)（1254×1254，12 MB）
+[Download orange_book_girl.psd](examples/orange_book_girl.psd) (1254×1254, 12 MB)
 
 ### Star Cat
 
 <img src="examples/star_cat_preview.png" width="300"> <img src="examples/star_cat_layers.png" width="480">
 
-[下载 star_cat.psd](examples/star_cat.psd)（1254×1254，10 MB）
+[Download star_cat.psd](examples/star_cat.psd) (1254×1254, 10 MB)
 
-## 单独使用导出脚本
+## Using the export script on its own
 
-已经有拆好的透明 PNG 或分层 SVG 时，可以跳过 agent，直接导出 PSD：
+If you already have transparent part PNGs or a layered SVG, you can skip the agent and export the PSD directly:
 
 ```bash
 python skills/image-to-psd/scripts/layered_assets.py psd-png parts.json character.psd --report qa.json
@@ -104,7 +104,7 @@ python skills/image-to-psd/scripts/layered_assets.py psd-png parts.json characte
 python skills/image-to-psd/scripts/layered_assets.py psd existing.svg character.psd --report qa.json
 ```
 
-`parts.json` 按从后到前列出图层，每张 PNG 与画布同尺寸、同位置：
+`parts.json` lists the layers from back to front. Every PNG has the same size and position as the canvas:
 
 ```json
 {"width":1254,"height":1254,"layers":[
@@ -114,21 +114,21 @@ python skills/image-to-psd/scripts/layered_assets.py psd existing.svg character.
 ]}
 ```
 
-没列出的标准图层会自动补成空层。
+Standard layers you leave out are added as empty layers.
 
-## 注意
+## Notes
 
-- 这个 skill 提供的是拆层流程和可靠的 PSD 导出，不保证任意原画一键拆到生产级绑定质量。
-- 被遮挡的部分是推补出来的，交付时 agent 会说明哪些部位是补画的。
-- 部件参考图依赖图像生成工具（Codex 的 ImageGen）。
+- The skill provides a layer-splitting workflow and a reliable PSD export. It does not promise one-click, production-grade rigging quality for any artwork.
+- Hidden areas are inferred. The agent tells you which parts were filled in when it delivers the file.
+- Part reference images depend on an image generation tool (ImageGen in Codex).
 
-## 目录结构
+## Repository layout
 
 ```
 skills/image-to-psd/
-├── SKILL.md              工作流
-├── references/           部件规范、审核清单、透明度与兼容性说明
-├── scripts/              PSD 导出脚本
-└── agents/openai.yaml    Codex 界面配置
-examples/                 示例 PSD 与预览图
+├── SKILL.md              Workflow
+├── references/           Layer spec, review checklist, transparency and compatibility notes
+├── scripts/              PSD export script
+└── agents/openai.yaml    Codex interface config
+examples/                 Example PSDs and previews
 ```
