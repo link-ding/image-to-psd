@@ -1,0 +1,14 @@
+interface:
+  display_name: image-to-psd
+  short_description: Split character art into a layered PSD with editable masks
+  default_prompt: Use $image-to-psd to split this character artwork into a layered
+    PSD and check each part and its mask.
+  icon_small: assets/icon.svg
+  icon_large: assets/icon.svg
+policy:
+  products:
+  - chatgpt
+  - codex
+  - api
+  - atlas
+  allow_implicit_invocation: true
